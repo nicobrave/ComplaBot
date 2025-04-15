@@ -142,14 +142,29 @@ def respuesta_industria_click():
     email = request.args.get("e")
 
     if not industria or not email:
-        return "Datos inválidos", 400
+        return "❌ Datos inválidos", 400
 
-    # Actualizar Supabase
-    supabase.table("usuarios").update({
-        "industria": industria.capitalize()
-    }).eq("email", email).execute()
+    # Sanitizar email
+    email = email.strip().lower()
+    industria = industria.strip().capitalize()
 
-    return f"✅ Gracias, hemos registrado tu industria: {industria.capitalize()}."
+    try:
+        # Intentar actualizar
+        response = supabase.table("usuarios").update({
+            "industria": industria
+        }).eq("email", email).execute()
+
+        print("🔍 Resultado del UPDATE:", response.data)
+
+        if not response.data:
+            return "⚠️ No se encontró el usuario para actualizar.", 404
+
+        return f"✅ Gracias, hemos registrado tu industria: {industria}."
+
+    except Exception as e:
+        print("❌ Error al actualizar industria:", str(e))
+        return "Error interno del servidor", 500
+
 
 if __name__ == "__main__":
     # Verificación final antes de iniciar
