@@ -142,41 +142,50 @@ def respuesta_industria_click():
     email = request.args.get("e")
 
     if not industria or not email:
-        return "❌ Faltan parámetros: i (industria) y e (email) son requeridos", 400
+        return "❌ Parámetros incompletos", 400
 
-    # Normalización
     email = email.strip().lower()
     industria = industria.strip().capitalize()
 
     try:
-        # 1. Verificar existencia del usuario
-        user_query = supabase.table('usuarios')\
-                         .select('id')\
-                         .eq('email', email)\
-                         .execute()
+        # Método 1: Verificación directa
+        direct_check = supabase.table('usuarios')\
+                            .select('id')\
+                            .eq('email', email)\
+                            .execute()
 
-        if not user_query.data:
-            return "⚠️ Email no encontrado en nuestra base", 404
+        if not direct_check.data:
+            # Método 2: Verificación por RPC (backup)
+            rpc_check = supabase.rpc(
+                "verificar_email_existente",
+                {"email_input": email}
+            ).execute()
 
-        # 2. Actualización directa con tabla
-        update_response = supabase.table('usuarios')\
-                               .update({'industria': industria})\
-                               .eq('email', email)\
-                               .execute()
+            if not rpc_check.data:
+                return "⚠️ Email no existe en ningún método de verificación", 404
 
-        print(f"\n=== DEBUG ACTUALIZACIÓN ===")
-        print(f"Filas afectadas: {len(update_response.data)}")
-        print(f"Datos actualizados: {update_response.data}")
-        print("===========================\n")
+        # Actualización con ambos métodos posibles
+        try:
+            # Intento con RPC primero
+            update_rpc = supabase.rpc(
+                "actualizar_industria",
+                {"email_input": email, "industria_input": industria}
+            ).execute()
 
-        if len(update_response.data) > 0:
-            return f"✅ Industria actualizada: {industria}", 200
-        else:
-            return "⚠️ No se realizaron cambios (¿mismo valor?)", 200
+            if isinstance(update_rpc.data, list):
+                return f"✅ Actualizado vía RPC: {industria}", 200
+        except:
+            # Fallback a actualización directa
+            update_direct = supabase.table('usuarios')\
+                                 .update({'industria': industria})\
+                                 .eq('email', email)\
+                                 .execute()
+
+            return f"✅ Actualizado vía tabla directa: {industria}", 200
 
     except Exception as e:
-        print(f"\n❌ Error en actualización: {type(e).__name__} - {str(e)}")
-        return "Error interno del servidor", 500
+        print(f"Error final: {str(e)}")
+        return "Error interno", 500
     
 if __name__ == "__main__":
     # Verificación final antes de iniciar
