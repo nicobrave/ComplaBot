@@ -5,6 +5,8 @@ from supabase import create_client
 import requests
 from dotenv import load_dotenv
 from pathlib import Path
+from agente import agente_cumplimiento
+
 
 # Configuración inicial
 app = Flask(__name__)
@@ -154,51 +156,44 @@ def respuesta_industria_click():
         return jsonify({"error": "Parámetros incompletos"}), 400
 
     try:
-        # Normalización
         email = email.strip().lower()
         industria = industria.strip().capitalize()
 
         print(f"\n=== PARÁMETROS NORMALIZADOS ===")
         print(f"Email: '{email}'")
         print(f"Industria: '{industria}'")
-        
-        # Primero consulta TODOS los usuarios para debug
+
         all_users = supabase.table('usuarios').select('*').execute()
         print(f"\n=== TODOS LOS USUARIOS ===")
         for user in all_users.data:
             print(f"Usuario: {user['email']} - ID: {user.get('id')}")
         print("========================")
-        
-        # Verificación EXISTENCIA REAL - intentar con ILIKE para ignorar mayúsculas/minúsculas
+
         user = supabase.table('usuarios')\
                      .select('*')\
                      .ilike('email', f"%{email}%")\
                      .execute()
-        
+
         print(f"\n=== CONSULTA USUARIO ILIKE ===")
         print(f"Resultado: {user}")
         print(f"Datos: {user.data}")
         print("============================")
-        
+
         if not user.data:
-            # Si no encuentra con ILIKE, es posible que el usuario realmente no exista
             return jsonify({"error": "Email no encontrado en la base de datos"}), 404
 
-        # Si encontramos el usuario, obtenemos su ID
         user_id = user.data[0]['id']
         print(f"ID de usuario encontrado: {user_id}")
-        
-        # Actualizar usando ID en lugar de email
+
         update = supabase.table('usuarios')\
                        .update({'industria': industria})\
                        .eq('id', user_id)\
                        .execute()
-        
+
         print(f"\n=== RESULTADO UPDATE ===")
         print(f"Update: {update}")
         print(f"Update data: {update.data}")
-        
-        # VERIFICACIÓN INMEDIATA usando ID
+
         updated = supabase.table('usuarios')\
                         .select('*')\
                         .eq('id', user_id)\
@@ -206,29 +201,79 @@ def respuesta_industria_click():
 
         print(f"\n=== VERIFICACIÓN POST-ACTUALIZACIÓN ===")
         print(f"Usuario completo: {updated.data[0] if updated.data else 'No data'}")
+
         if updated.data:
-            print(f"Industria en BD: {updated.data[0].get('industria')}")
+            actual = updated.data[0].get('industria')
+            print(f"Industria en BD: {actual}")
             print(f"Industria esperada: {industria}")
-            
-            if updated.data[0].get('industria') == industria:
-                return jsonify({
-                    "message": "Industria actualizada correctamente",
-                    "data": updated.data[0]
-                }), 200
+
+            if actual == industria:
+                return f"""
+                <html>
+                  <head>
+                    <title>Industria registrada</title>
+                    <meta charset="UTF-8">
+                    <style>
+                      body {{
+                        font-family: Arial, sans-serif;
+                        text-align: center;
+                        padding-top: 80px;
+                        background-color: #f9f9f9;
+                      }}
+                      .card {{
+                        display: inline-block;
+                        background: white;
+                        padding: 30px;
+                        border-radius: 12px;
+                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                      }}
+                      h2 {{
+                        color: #2c3e50;
+                      }}
+                      p {{
+                        color: #555;
+                        font-size: 16px;
+                      }}
+                    </style>
+                  </head>
+                  <body>
+                    <div class="card">
+                      <h2>✅ ¡Gracias por registrarte!</h2>
+                      <p>Hemos guardado tu industria como:</p>
+                      <p><strong>{industria}</strong></p>
+                      <p>Muy pronto recibirás recomendaciones adaptadas a tu sector.</p>
+                    </div>
+                  </body>
+                </html>
+                """
             else:
                 return jsonify({
                     "warning": "La BD no refleja los cambios",
                     "current_data": updated.data[0]
                 }), 500
-                 
-                
         else:
             return jsonify({"error": "No se pudo verificar la actualización"}), 500
 
     except Exception as e:
         print(f"\n❌ Error crítico: {str(e)}")
         return jsonify({"error": str(e)}), 500
-        
+
+@app.route("/activar-agente", methods=["GET"])
+def activar_agente_manual():
+    email = request.args.get("e")
+
+    if not email:
+        return "❌ Falta el parámetro ?e=email", 400
+
+    try:
+        from agente import agente_cumplimiento
+        agente_cumplimiento(email)
+        return f"✅ Agente ejecutado correctamente para: {email}", 200
+    except Exception as e:
+        print("❌ Error ejecutando el agente:", str(e))
+        return f"⚠️ Error: {str(e)}", 500
+
+
 if __name__ == "__main__":
     # Verificación final antes de iniciar
     required_vars = ["SUPABASE_URL", "SUPABASE_KEY", "MAILGUN_DOMAIN", "MAILGUN_API_KEY"]
