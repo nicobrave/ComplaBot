@@ -142,50 +142,53 @@ def respuesta_industria_click():
     email = request.args.get("e")
 
     if not industria or not email:
-        return "❌ Parámetros incompletos", 400
-
-    email = email.strip().lower()
-    industria = industria.strip().capitalize()
+        return jsonify({"error": "Parámetros incompletos"}), 400
 
     try:
-        # Método 1: Verificación directa
-        direct_check = supabase.table('usuarios')\
-                            .select('id')\
-                            .eq('email', email)\
-                            .execute()
+        # Normalización
+        email = email.strip().lower()
+        industria = industria.strip().capitalize()
 
-        if not direct_check.data:
-            # Método 2: Verificación por RPC (backup)
-            rpc_check = supabase.rpc(
-                "verificar_email_existente",
-                {"email_input": email}
-            ).execute()
+        # Verificación EXISTENCIA REAL
+        user = supabase.table('usuarios')\
+                     .select('*')\
+                     .eq('email', email)\
+                     .execute()
+        
+        if not user.data:
+            return jsonify({"error": "Email no existe"}), 404
 
-            if not rpc_check.data:
-                return "⚠️ Email no existe en ningún método de verificación", 404
+        # ACTUALIZACIÓN CONFIRMABLE
+        update = supabase.table('usuarios')\
+                       .update({'industria': industria})\
+                       .eq('email', email)\
+                       .execute()
 
-        # Actualización con ambos métodos posibles
-        try:
-            # Intento con RPC primero
-            update_rpc = supabase.rpc(
-                "actualizar_industria",
-                {"email_input": email, "industria_input": industria}
-            ).execute()
+        # VERIFICACIÓN INMEDIATA
+        updated = supabase.table('usuarios')\
+                        .select('industria')\
+                        .eq('email', email)\
+                        .execute()
 
-            if isinstance(update_rpc.data, list):
-                return f"✅ Actualizado vía RPC: {industria}", 200
-        except:
-            # Fallback a actualización directa
-            update_direct = supabase.table('usuarios')\
-                                 .update({'industria': industria})\
-                                 .eq('email', email)\
-                                 .execute()
+        print(f"\n=== VERIFICACIÓN POST-ACTUALIZACIÓN ===")
+        print(f"Industria en BD: {updated.data[0]['industria']}")
+        print(f"Industria esperada: {industria}")
+        print("======================================")
 
-            return f"✅ Actualizado vía tabla directa: {industria}", 200
+        if updated.data[0]['industria'] == industria:
+            return jsonify({
+                "message": "Industria actualizada correctamente",
+                "data": updated.data[0]
+            }), 200
+        else:
+            return jsonify({
+                "warning": "La BD no refleja los cambios",
+                "current_data": updated.data[0]
+            }), 500
 
     except Exception as e:
-        print(f"Error final: {str(e)}")
-        return "Error interno", 500
+        print(f"\n❌ Error crítico: {str(e)}")
+        return jsonify({"error": "Error interno"}), 500
     
 if __name__ == "__main__":
     # Verificación final antes de iniciar
