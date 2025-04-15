@@ -144,8 +144,7 @@ def respuesta_industria_click():
     print(f"\n=== PARÁMETROS RECIBIDOS ===")
     print(f"Email: '{email}'")
     print(f"Industria: '{industria}'")
-    print("===========================")
-
+    
     if not industria or not email:
         return jsonify({"error": "Parámetros incompletos"}), 400
 
@@ -157,78 +156,67 @@ def respuesta_industria_click():
         print(f"\n=== PARÁMETROS NORMALIZADOS ===")
         print(f"Email: '{email}'")
         print(f"Industria: '{industria}'")
-        print("==============================")
-
-        # Verificación EXISTENCIA REAL
+        
+        # Primero consulta TODOS los usuarios para debug
+        all_users = supabase.table('usuarios').select('*').execute()
+        print(f"\n=== TODOS LOS USUARIOS ===")
+        for user in all_users.data:
+            print(f"Usuario: {user['email']} - ID: {user.get('id')}")
+        print("========================")
+        
+        # Verificación EXISTENCIA REAL - intentar con ILIKE para ignorar mayúsculas/minúsculas
         user = supabase.table('usuarios')\
                      .select('*')\
-                     .eq('email', email)\
+                     .ilike('email', f"%{email}%")\
                      .execute()
         
-        print(f"\n=== CONSULTA USUARIO ===")
+        print(f"\n=== CONSULTA USUARIO ILIKE ===")
         print(f"Resultado: {user}")
         print(f"Datos: {user.data}")
-        print("=======================")
-
-        if not user.data:
-            return jsonify({"error": "Email no existe"}), 404
-
-        # Intento directo con RPC para evitar problemas de RLS
-        try:
-            # Primero intenta con el método normal
-            update = supabase.table('usuarios')\
-                           .update({'industria': industria})\
-                           .eq('email', email)\
-                           .execute()
-            
-            print(f"\n=== RESULTADO UPDATE ===")
-            print(f"Update: {update}")
-            print(f"Update data: {update.data}")
-            print("=======================")
-            
-        except Exception as update_error:
-            print(f"\n❌ Error en update: {str(update_error)}")
-            # Intenta con un método alternativo usando RPC
-            try:
-                # Crear una función SQL en Supabase (una sola vez):
-                # CREATE OR REPLACE FUNCTION actualizar_industria(p_email TEXT, p_industria TEXT)
-                # RETURNS SETOF usuarios AS $$
-                #   UPDATE usuarios SET industria = p_industria WHERE email = p_email RETURNING *;
-                # $$ LANGUAGE sql SECURITY DEFINER;
-                
-                # Llamar a la función RPC
-                update = supabase.rpc(
-                    'actualizar_industria',
-                    {'p_email': email, 'p_industria': industria}
-                ).execute()
-                print(f"\n=== RESULTADO RPC UPDATE ===")
-                print(f"RPC Update: {update}")
-                print("============================")
-            except Exception as rpc_error:
-                print(f"\n❌ Error en RPC update: {str(rpc_error)}")
-
+        print("============================")
         
-            updated = supabase.table('usuarios')\
-                .select('*')\
-                .eq('email',email)\
-                .execute()
+        if not user.data:
+            # Si no encuentra con ILIKE, es posible que el usuario realmente no exista
+            return jsonify({"error": "Email no encontrado en la base de datos"}), 404
 
-            print(f"\n")
-        print(f"Usuario completo: {updated.data[0]}")
-        print(f"Industria en BD: {updated.data[0].get('industria')}")
-        print(f"Industria esperada: {industria}")
-        print("======================================")
+        # Si encontramos el usuario, obtenemos su ID
+        user_id = user.data[0]['id']
+        print(f"ID de usuario encontrado: {user_id}")
+        
+        # Actualizar usando ID en lugar de email
+        update = supabase.table('usuarios')\
+                       .update({'industria': industria})\
+                       .eq('id', user_id)\
+                       .execute()
+        
+        print(f"\n=== RESULTADO UPDATE ===")
+        print(f"Update: {update}")
+        print(f"Update data: {update.data}")
+        
+        # VERIFICACIÓN INMEDIATA usando ID
+        updated = supabase.table('usuarios')\
+                        .select('*')\
+                        .eq('id', user_id)\
+                        .execute()
 
-        if updated.data[0].get('industria') == industria:
-            return jsonify({
-                "message": "Industria actualizada correctamente",
-                "data": updated.data[0]
-            }), 200
+        print(f"\n=== VERIFICACIÓN POST-ACTUALIZACIÓN ===")
+        print(f"Usuario completo: {updated.data[0] if updated.data else 'No data'}")
+        if updated.data:
+            print(f"Industria en BD: {updated.data[0].get('industria')}")
+            print(f"Industria esperada: {industria}")
+            
+            if updated.data[0].get('industria') == industria:
+                return jsonify({
+                    "message": "Industria actualizada correctamente",
+                    "data": updated.data[0]
+                }), 200
+            else:
+                return jsonify({
+                    "warning": "La BD no refleja los cambios",
+                    "current_data": updated.data[0]
+                }), 500
         else:
-            return jsonify({
-                "warning": "La BD no refleja los cambios",
-                "current_data": updated.data[0]
-            }), 500
+            return jsonify({"error": "No se pudo verificar la actualización"}), 500
 
     except Exception as e:
         print(f"\n❌ Error crítico: {str(e)}")
