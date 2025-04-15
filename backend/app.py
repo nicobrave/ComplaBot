@@ -149,44 +149,35 @@ def respuesta_industria_click():
     industria = industria.strip().capitalize()
 
     try:
-        # 1. Primero verificar si el email existe
-        user_query = supabase.rpc(
-            "verificar_email_existente",
-            {"email_input": email}
-        ).execute()
+        # 1. Verificar existencia del usuario
+        user_query = supabase.table('usuarios')\
+                         .select('id')\
+                         .eq('email', email)\
+                         .execute()
 
         if not user_query.data:
             return "⚠️ Email no encontrado en nuestra base", 404
 
-        # 2. Actualizar industria
-        update_response = supabase.rpc(
-            "actualizar_industria",
-            {
-                "email_input": email,
-                "industria_input": industria
-            }
-        ).execute()
+        # 2. Actualización directa con tabla
+        update_response = supabase.table('usuarios')\
+                               .update({'industria': industria})\
+                               .eq('email', email)\
+                               .execute()
 
-        # Debug detallado
-        print(f"\n=== DEBUG UPDATE ===")
-        print(f"Email: {email}")
-        print(f"Industria: {industria}")
-        print(f"Supabase response: {update_response}")
-        print(f"Response data: {update_response.data}")
-        print(f"Response status_code: {update_response.status_code}")
-        print("===================\n")
+        print(f"\n=== DEBUG ACTUALIZACIÓN ===")
+        print(f"Filas afectadas: {len(update_response.data)}")
+        print(f"Datos actualizados: {update_response.data}")
+        print("===========================\n")
 
-        # En Supabase v2, una actualización exitosa generalmente devuelve 200-204
-        if update_response.status_code >= 200 and update_response.status_code < 300:
-            return f"✅ Gracias, hemos registrado tu industria: {industria}.", 200
+        if len(update_response.data) > 0:
+            return f"✅ Industria actualizada: {industria}", 200
         else:
-            return f"⚠️ No se pudo actualizar (código {update_response.status_code})", 400
+            return "⚠️ No se realizaron cambios (¿mismo valor?)", 200
 
     except Exception as e:
-        print(f"\n❌ Error crítico en actualización: {str(e)}")
+        print(f"\n❌ Error en actualización: {type(e).__name__} - {str(e)}")
         return "Error interno del servidor", 500
-
-
+    
 if __name__ == "__main__":
     # Verificación final antes de iniciar
     required_vars = ["SUPABASE_URL", "SUPABASE_KEY", "MAILGUN_DOMAIN", "MAILGUN_API_KEY"]
