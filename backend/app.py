@@ -144,15 +144,15 @@ def respuesta_industria_click():
     if not industria or not email:
         return "❌ Datos inválidos", 400
 
-    # Sanitizar email
-    email = email.strip().lower()
+    # Normalizar valores
+    email = email.strip()
     industria = industria.strip().capitalize()
 
     try:
-        # Intentar actualizar
+        # Actualizar con búsqueda insensible a mayúsculas
         response = supabase.table("usuarios").update({
             "industria": industria
-        }).eq("email", email).execute()
+        }).ilike("email", email).execute()
 
         print("🔍 Resultado del UPDATE:", response.data)
 
