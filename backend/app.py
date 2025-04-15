@@ -142,29 +142,48 @@ def respuesta_industria_click():
     email = request.args.get("e")
 
     if not industria or not email:
-        return "❌ Datos inválidos", 400
+        return "❌ Faltan parámetros: i (industria) y e (email) son requeridos", 400
 
-    # Normalizar valores
+    # Normalización
     email = email.strip().lower()
     industria = industria.strip().capitalize()
 
     try:
-        # Actualizar con búsqueda insensible a mayúsculas
-        response = supabase.rpc(
-    "actualizar_industria",
-    {"email_input": email, "industria_input": industria}
-    ).execute()
+        # 1. Primero verificar si el email existe
+        user_query = supabase.rpc(
+            "verificar_email_existente",
+            {"email_input": email}
+        ).execute()
 
+        if not user_query.data:
+            return "⚠️ Email no encontrado en nuestra base", 404
 
-        print("🔍 Resultado del UPDATE:", response.data)
+        # 2. Actualizar industria
+        update_response = supabase.rpc(
+            "actualizar_industria",
+            {
+                "email_input": email,
+                "industria_input": industria
+            }
+        ).execute()
 
-        if not response.data:
-            return "⚠️ No se encontró el usuario para actualizar.", 404
+        # Debug detallado
+        print(f"\n=== DEBUG UPDATE ===")
+        print(f"Email: {email}")
+        print(f"Industria: {industria}")
+        print(f"Supabase response: {update_response}")
+        print(f"Response data: {update_response.data}")
+        print(f"Response status_code: {update_response.status_code}")
+        print("===================\n")
 
-        return f"✅ Gracias, hemos registrado tu industria: {industria}."
+        # En Supabase v2, una actualización exitosa generalmente devuelve 200-204
+        if update_response.status_code >= 200 and update_response.status_code < 300:
+            return f"✅ Gracias, hemos registrado tu industria: {industria}.", 200
+        else:
+            return f"⚠️ No se pudo actualizar (código {update_response.status_code})", 400
 
     except Exception as e:
-        print("❌ Error al actualizar industria:", str(e))
+        print(f"\n❌ Error crítico en actualización: {str(e)}")
         return "Error interno del servidor", 500
 
 
