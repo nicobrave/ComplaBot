@@ -79,6 +79,11 @@ Gracias por confiar en nosotros.
 
     return response
 
+from flask import render_template
+
+@app.route("/")
+def landing():
+    return render_template("index.html")
 
 @app.route("/suscribirse", methods=["POST"])
 def suscribirse():
@@ -215,6 +220,8 @@ def respuesta_industria_click():
                     "warning": "La BD no refleja los cambios",
                     "current_data": updated.data[0]
                 }), 500
+                 
+                
         else:
             return jsonify({"error": "No se pudo verificar la actualización"}), 500
 
