@@ -150,9 +150,11 @@ def respuesta_industria_click():
 
     try:
         # Actualizar con búsqueda insensible a mayúsculas
-        response = supabase.table("usuarios").update({
-            "industria": industria
-        }).ilike("email", email).execute()
+        response = supabase.rpc(
+    "actualizar_industria",
+    {"email_input": email, "industria_input": industria}
+    ).execute()
+
 
         print("🔍 Resultado del UPDATE:", response.data)
 
