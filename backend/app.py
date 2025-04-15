@@ -145,7 +145,7 @@ def respuesta_industria_click():
         return "❌ Datos inválidos", 400
 
     # Normalizar valores
-    email = email.strip()
+    email = email.strip().lower()
     industria = industria.strip().capitalize()
 
     try:
