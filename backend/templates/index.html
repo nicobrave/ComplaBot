@@ -41,7 +41,7 @@
       e.preventDefault();
       const email = document.getElementById("email").value;
 
-      const res = await fetch("http://127.0.0.1:5000/suscribirse", {
+      const res = await fetch("https://agente.recomai.cl/suscribirse", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
