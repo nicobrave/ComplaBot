@@ -6,7 +6,9 @@ import requests
 from dotenv import load_dotenv
 from pathlib import Path
 from agente import agente_cumplimiento
-
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 # Configuración inicial
 app = Flask(__name__)
