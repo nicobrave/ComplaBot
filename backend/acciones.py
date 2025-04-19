@@ -7,7 +7,7 @@ from usuarios import (
 )
 from notificaciones import enviar_reporte_estado, enviar_recomendacion_agente
 from interacciones import registrar_interaccion
-from agente import obtener_respuesta_langflow
+from agente import interpretar_gpt
 
 ETAPAS = ["Diagnóstico", "Evaluación", "Implementación", "Verificación", "Cierre"]
 
@@ -58,7 +58,9 @@ def manejar_accion(email: str, accion: str, etapa: str = None) -> str:
         actualizar_etapa_usuario(email, nueva_etapa)
         registrar_interaccion(email, "siguiente", nueva_etapa, industria)
 
-        resultado = obtener_respuesta_langflow(industria, nueva_etapa, "sin contexto")
+    # Nueva lógica: genera recomendación con GPT
+        prompt = f"Envia una recomendación legal y de cumplimiento para una empresa de la industria {industria} en la etapa {nueva_etapa}."
+        resultado = interpretar_gpt(prompt, email)
 
         ok = enviar_recomendacion_agente(email, industria, nueva_etapa, resultado)
 
