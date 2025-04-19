@@ -13,6 +13,10 @@ SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
+def obtener_todos_los_usuarios():
+    # Puedes ajustar para filtrar solo usuarios activos si quieres
+    resp = supabase.table("usuarios").select("email").execute()
+    return [item["email"] for item in resp.data or []]
 
 def obtener_usuario_por_email(email: str) -> dict:
     response = supabase.table("usuarios")\
@@ -52,15 +56,23 @@ def usuario_uso_respuesta_literal_hoy(email):
         .execute()
     return len(response.data) > 0
 
-def registrar_respuesta_literal(email, etapa=None):
+def registrar_respuesta_literal(email: str, etapa: str = None) -> bool:
+    """
+    Registra en la tabla 'interacciones' una respuesta literal del usuario.
+    Si no se pasa 'etapa', usa 'diagnostico' por defecto.
+    """
     now = datetime.datetime.now().isoformat()
+    etapa_a_insertar = etapa if etapa is not None else "diagnostico"
+
     supabase.table("interacciones").insert({
-        "email": email,
-        "tipo": "respuesta_literal",
-        "etapa": etapa,
+        "email":         email,
+        "tipo":          "respuesta_literal",
+        "etapa":         etapa_a_insertar,
         "estado_agente": "usado",
-        "timestamp": now
+        "timestamp":     now
     }).execute()
+
+    return True
 
 def insertar_usuario(email: str) -> bool:
     response = supabase.table("usuarios").insert({

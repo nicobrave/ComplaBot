@@ -1,55 +1,92 @@
 # agente.py
-import openai
+
 import os
+import json
+import openai
+from pydantic import BaseModel
 from usuarios import obtener_datos_usuario
 from notificaciones import enviar_recomendacion_agente
 
+# Inicializa cliente compatible con openai>=1.0.0
+client = openai.OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
-openai.api_key = os.environ.get("OPENAI_API_KEY")
+# Output estructurado
+class CumplimientoOutput(BaseModel):
+    accion: str            # e.g. "pausa", "siguiente", "completado", etc.
+    parametros: dict
+    respuesta: str
+    confianza: float
+    resumen: str
 
-def interpretar_gpt(contenido_usuario, email):
-    system_prompt = (
-        "Eres CumpliBot, un agente de cumplimiento normativo que responde profesional, "
-        "claro y siempre en tono humano. Solo responde a temas reales de cumplimiento. "
-        "El/La usuario/a puede pausar, pedir reporte, sugerir frecuencia, solicitar contenido legal, o avanzar etapa. "
-        "Si la consulta es poco clara, pide reformular la pregunta."
-    )
-    try:
-        respuesta = openai.ChatCompletion.create(
-            model="gpt-4-1106-preview",
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": contenido_usuario}
-            ],
-            max_tokens=500,
-            temperature=0.2,
-            user=email
+class ComplaBotAgent:
+    def __init__(self, nombre="ComplaBot"):
+        self.nombre = nombre
+
+    def interpretar(self, user_input, user_email, industria, etapa):
+        system_prompt = (
+            f"Eres ComplaBot, un agente experto en cumplimiento normativo para empresas chilenas. "
+            f"Industria: {industria}. Etapa: {etapa}. "
+            "Interpreta la consulta del usuario para identificar su intención principal "
+            "(pausar, avanzar etapa, reporte, ajustar frecuencia, solicitar contenido legal, etc). "
+            "Devuelve SIEMPRE un JSON con este schema: {accion, parametros, respuesta, confianza, resumen}. "
+            "Si no entiendes la intención o hay mezcla, sé honesto y acláralo en 'respuesta'."
         )
-        texto_respuesta = respuesta['choices'][0]['message']['content'].strip()
-        return texto_respuesta
-    except Exception as e:
-        print(f"Error GPT-4.1: {e}")
-        return (
-            "Lo siento, hubo un problema técnico procesando tu mensaje. "
-            "Intenta nuevamente en unos minutos."
-        )
+        user_prompt = f"Usuario: '{user_input}'"
+
+        try:
+            response = client.chat.completions.create(
+                model="gpt-4-1106-preview",
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt}
+                ],
+                max_tokens=500,
+                temperature=0.1,
+                user=user_email
+            )
+            raw = response.choices[0].message.content
+
+            def limpiar_json(texto):
+                import re
+                # Quita ```json ... ``` o ``` ... ``` y espacios extras
+                texto = texto.strip()
+                texto = re.sub(r'^```json', '', texto)
+                texto = re.sub(r'^```', '', texto)
+                texto = re.sub(r'```$', '', texto)
+                return texto.strip()
+
+            try:
+                clean_json = limpiar_json(raw)
+                output = CumplimientoOutput(**json.loads(clean_json))
+            except Exception:
+                output = CumplimientoOutput(
+                    accion="desconocido",
+                    parametros={},
+                    respuesta=raw,
+                    confianza=0.5,
+                    resumen="Respuesta directa, no estructurada."
+                )
+            return output
+
+        except Exception as e:
+            return CumplimientoOutput(
+                accion="error",
+                parametros={},
+                respuesta=f"Error técnico: {e}",
+                confianza=0,
+                resumen="Fallo técnico"
+            )
 
 def agente_cumplimiento(email: str):
-    print(f"\n🎯 Ejecutando agente para: {email}")
     usuario = obtener_datos_usuario(email)
-
     if not isinstance(usuario, dict):
         print("🚫 Usuario no encontrado o formato inválido")
         return
 
-    industria = usuario.get("industria", "").strip().capitalize()
-    etapa = usuario.get("etapa", "Diagnóstico").strip().capitalize()
+    industria = usuario.get("industria", "General")
+    etapa = usuario.get("etapa", "Diagnóstico")
 
-    print(f"🎯 Industria detectada: {industria}")
-    print(f"🔄 Etapa actual: {etapa}")
-
-    # Usamos GPT para generar el texto de recomendación inicial
     prompt = f"Envia una primera recomendación legal y de cumplimiento para una empresa de la industria {industria} en la etapa {etapa}."
-    texto = interpretar_gpt(prompt, email)
-
-    enviar_recomendacion_agente(email, industria, etapa, texto)
+    agent = ComplaBotAgent()
+    output = agent.interpretar(prompt, email, industria, etapa)
+    enviar_recomendacion_agente(email, industria, etapa, output.respuesta)

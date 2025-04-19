@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from pathlib import Path
 from agente import agente_cumplimiento
 from notificaciones import enviar_reporte_estado
+from usuarios import obtener_todos_los_usuarios
 
 # Cargar entorno
 env_path = Path(__file__).parent / ".env"
@@ -12,45 +13,34 @@ load_dotenv(dotenv_path=env_path, override=True)
 # Supabase
 supabase = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
 
-def obtener_usuarios_con_interacciones():
-    """
-    Devuelve lista de emails de usuarios que tienen al menos una interacción registrada.
-    """
-    response = supabase.table("interacciones")\
-        .select("email")\
-        .execute()
-
-    if not response.data:
-        return []
-
-    # Evita duplicados
-    correos_unicos = list(set([item["email"] for item in response.data if "email" in item]))
-    return correos_unicos
-
-def run_inicio_semana():
-    print("🚀 Enviando inicio de semana...")
-    usuarios = obtener_usuarios_con_interacciones()
-    print(f"👥 Usuarios con interacciones: {len(usuarios)}")
-
-    if not usuarios:
-        print("⚠️ No se encontraron usuarios con interacciones.")
-        return
+def seguimiento_diario():
+    print("📅 Enviando seguimiento diario a usuarios...")
+    usuarios = obtener_todos_los_usuarios()
+    print(f"👥 Usuarios encontrados: {len(usuarios)}")
 
     for email in usuarios:
         try:
-            print(f"🔄 Ejecutando agente para {email}")
+            print(f"🔁 Enviando seguimiento IA a {email}")
             agente_cumplimiento(email)
         except Exception as e:
             print(f"❌ Error con {email}: {str(e)}")
 
-def run_fin_semana():
-    print("📊 Enviando resumen de fin de semana...")
-    usuarios = obtener_usuarios_con_interacciones()
-    print(f"👥 Usuarios con interacciones: {len(usuarios)}")
+def inicio_semana():
+    print("🚀 Enviando apertura de semana...")
+    usuarios = obtener_todos_los_usuarios()
+    print(f"👥 Usuarios encontrados: {len(usuarios)}")
 
-    if not usuarios:
-        print("⚠️ No se encontraron usuarios con interacciones.")
-        return
+    for email in usuarios:
+        try:
+            print(f"🔄 Inicio de semana para {email}")
+            agente_cumplimiento(email)
+        except Exception as e:
+            print(f"❌ Error con {email}: {str(e)}")
+
+def fin_semana():
+    print("📊 Enviando resumen de fin de semana...")
+    usuarios = obtener_todos_los_usuarios()
+    print(f"👥 Usuarios encontrados: {len(usuarios)}")
 
     for email in usuarios:
         try:
@@ -60,11 +50,18 @@ def run_fin_semana():
             print(f"❌ Error con {email}: {str(e)}")
 
 if __name__ == "__main__":
-    opcion = input("¿Qué tarea quieres correr? (inicio | fin): ").strip().lower()
-    
-    if opcion == "inicio":
-        run_inicio_semana()
+    import sys
+    # Modo de uso: python scheduler.py diario
+    if len(sys.argv) < 2:
+        print("⚠️ Modo de uso: python scheduler.py diario|inicio|fin")
+        exit(1)
+
+    opcion = sys.argv[1]
+    if opcion == "diario":
+        seguimiento_diario()
+    elif opcion == "inicio":
+        inicio_semana()
     elif opcion == "fin":
-        run_fin_semana()
+        fin_semana()
     else:
-        print("⚠️ Opción inválida. Usa: inicio o fin")
+        print("⚠️ Opción inválida. Usa: diario | inicio | fin")

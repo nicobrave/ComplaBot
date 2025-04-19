@@ -14,8 +14,10 @@ from usuarios import (
     actualizar_industria,
     obtener_usuario_por_email
 )
-from agente import agente_cumplimiento, interpretar_gpt
+from agente import agente_cumplimiento
 from notificaciones import enviar_email
+from agente import ComplaBotAgent
+from usuarios import obtener_datos_usuario
 
 # Configuración
 app = Flask(__name__)
@@ -107,6 +109,10 @@ def respuesta_industria_click():
 
     actualizar_industria(email, industria.capitalize())
 
+    # NUEVO: Trigger automático de seguimiento con GPT (tras elegir industria)
+    from agente import agente_cumplimiento
+    agente_cumplimiento(email)
+    
     return f"""
     <html><head><meta charset="UTF-8"><style>
     body {{ font-family: sans-serif; text-align: center; padding: 50px; }}
@@ -192,10 +198,28 @@ def recibir_respuesta():
         )
         return jsonify({"accion": "limitado", "mensaje": resultado["respuesta"]}), 200
 
-    # Pipeline normal: integra GPT-4.1 aquí al permitir
-    respuesta_gpt = interpretar_gpt(texto, email)
-    enviar_email(email, "Respuesta de ComplaBot", respuesta_gpt)
-    return jsonify({"accion": "permitido", "mensaje": "Respuesta enviada por email.", "respuesta_gpt": respuesta_gpt}), 200
+    # Nuevo pipeline IA: usa agente modular
+    usuario = obtener_datos_usuario(email)
+    industria = usuario.get("industria", "General")
+    etapa = usuario.get("etapa", "Diagnóstico")
+
+    agent = ComplaBotAgent()
+    output = agent.interpretar(texto, email, industria, etapa)
+
+    # Enviar el mensaje estructurado al usuario
+    enviar_email(email, "Respuesta de ComplaBot", output.respuesta)
+
+    # Puedes rutear lógica basada en output.accion, output.parametros aquí si lo deseas
+
+    return jsonify({
+        "accion": "permitido",
+        "mensaje": "Respuesta enviada por email.",
+        "respuesta_ia": output.respuesta,
+        "deteccion_accion": output.accion,
+        "confianza": output.confianza,
+        "resumen": output.resumen,
+        "parametros": output.parametros
+    }), 200
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5050, debug=True)
+    app.run(host='127.0.0.1', port=5001, debug=True)
