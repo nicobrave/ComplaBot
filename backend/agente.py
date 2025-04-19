@@ -1,27 +1,10 @@
 # agente.py
-import requests
 import openai
 import os
 from usuarios import obtener_datos_usuario
 from notificaciones import enviar_recomendacion_agente
 
 openai.api_key = os.environ.get("OPENAI_API_KEY")
-
-def obtener_respuesta_langflow(industria: str, etapa: str, resultado: str) -> str:
-    try:
-        url = "http://localhost:7860/api/v1/run/2e0a65f2-07e6-4411-8187-78b072acdfbe"
-        payload = {
-            "industria": industria,
-            "etapa": etapa,
-            "resultado": resultado,
-            "input_type": "text",
-            "output_type": "text"
-        }
-        headers = {"Content-Type": "application/json"}
-        response = requests.post(url, json=payload, headers=headers)
-        return response.text if response.ok else "⚠️ Error generando recomendación con Langflow"
-    except Exception as e:
-        return f"❌ Error llamando a Langflow: {str(e)}"
 
 def interpretar_gpt(contenido_usuario, email):
     system_prompt = (
@@ -64,7 +47,8 @@ def agente_cumplimiento(email: str):
     print(f"🎯 Industria detectada: {industria}")
     print(f"🔄 Etapa actual: {etapa}")
 
-    resultado_placeholder = "..."  # si quieres puedes cambiarlo por algo más informativo
-    texto = obtener_respuesta_langflow(industria, etapa, resultado_placeholder)
+    # Usamos GPT para generar el texto de recomendación inicial
+    prompt = f"Envia una primera recomendación legal y de cumplimiento para una empresa de la industria {industria} en la etapa {etapa}."
+    texto = interpretar_gpt(prompt, email)
 
     enviar_recomendacion_agente(email, industria, etapa, texto)
