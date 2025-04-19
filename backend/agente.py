@@ -4,6 +4,7 @@ import os
 from usuarios import obtener_datos_usuario
 from notificaciones import enviar_recomendacion_agente
 
+
 openai.api_key = os.environ.get("OPENAI_API_KEY")
 
 def interpretar_gpt(contenido_usuario, email):
