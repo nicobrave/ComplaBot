@@ -1,0 +1,333 @@
+{
+    "General (Todas las industrias)": [
+      {
+        "Ley": "Ley de Delitos Económicos (Ley 21.595)",
+        "Obligaciones clave": [
+          "Implementar un Modelo de Prevención de Delitos (MPD) efectivo para cubrir un catálogo ampliado de ~200 delitos económicos y ambientales.",
+          "Evaluar y actualizar periódicamente el modelo de compliance con revisiones externas independientes (ya no basta la certificación única).",
+          "Extender los controles a terceros: la empresa puede ser penalmente responsable por delitos cometidos en su beneficio **o incluso sin beneficio directo**, incluyendo acciones de contratistas o asociados."
+        ]
+      },
+      {
+        "Ley": "Ley Karin (Ley 21.643, Acoso Laboral)",
+        "Obligaciones clave": [
+          "Establecer y aplicar un **protocolo interno** de prevención del acoso laboral, sexual y la violencia en el trabajo, bajo las directrices de la SUSESO&#8203;:contentReference[oaicite:0]{index=0}.",
+          "Incorporar en reglamentos internos procedimientos claros para **denunciar, investigar y sancionar** casos de acoso, definiendo responsabilidades, protegiendo a denunciantes y garantizando debido proceso.",
+          "Capacitar al personal y tomar medidas preventivas para asegurar un ambiente libre de acoso y violencia, con mayor fiscalización de la Dirección del Trabajo."
+        ]
+      },
+      {
+        "Ley": "Ley de 40 Horas (Ley 21.561)",
+        "Obligaciones clave": [
+          "Reducir gradualmente la jornada laboral ordinaria de 45 a 40 horas semanales sin disminuir el sueldo, de acuerdo al cronograma legal&#8203;:contentReference[oaicite:1]{index=1}.",
+          "Ajustar contratos, turnos y cálculos de horas extra conforme se implementa la nueva jornada máxima, asegurando el cumplimiento progresivo&#8203;:contentReference[oaicite:2]{index=2}."
+        ]
+      },
+      {
+        "Ley": "Ley de Protección de Datos Personales (Ley 19.628)",
+        "Obligaciones clave": [
+          "Obtener **consentimiento informado** antes de tratar datos personales y utilizarlos solo para los fines autorizados, conforme a las finalidades declaradas.",
+          "Salvaguardar la **confidencialidad y seguridad** de los datos de empleados, clientes y terceros, evitando accesos no autorizados o usos indebidos.",
+          "Permitir el ejercicio de derechos ARCO (acceso, rectificación, cancelación, oposición) por parte de los titulares, y registrar las bases de datos según lo requiera la autoridad."
+        ]
+      },
+      {
+        "Ley": "Ley de Protección al Consumidor (Ley 19.496)",
+        "Obligaciones clave": [
+          "Entregar información veraz sobre productos y servicios, evitando **publicidad engañosa** o cláusulas abusivas que perjudiquen a los consumidores.",
+          "Respetar los derechos del consumidor, incluyendo garantías legales, seguridad de los productos y atención oportuna de reclamos; proporcionar cambios, devoluciones o reparaciones cuando corresponda."
+        ]
+      },
+      {
+        "Ley": "Norma CMF N°461 (Reporte ESG)",
+        "Obligaciones clave": [
+          "Empresas reguladas (p.ej., S.A. abiertas) deben incluir información detallada de **Sostenibilidad y Gobierno Corporativo** en su Memoria Anual.",
+          "Divulgar misión, valores, prácticas de gobierno (composición del directorio, diversidad, políticas de riesgo) y cómo integran la sostenibilidad en la estrategia.",
+          "Reportar indicadores ambientales y sociales (diversidad de personal, uso de energía, riesgos en DD.HH., etc.) y métricas ESG materiales para su industria.",
+          "Mantener canales de denuncia y medidas anticorrupción (MPD según Ley 20.393/21.595) e informar su existencia en la memoria."
+        ]
+      },
+      {
+        "Ley": "Ley de Gobierno Corporativo (Ley 20.382)",
+        "Obligaciones clave": [
+          "Asegurar la **composición adecuada** del directorio (incluyendo independientes cuando aplique) y prácticas de transparencia en la gestión empresarial&#8203;:contentReference[oaicite:3]{index=3}.",
+          "Revelar remuneraciones de ejecutivos, conflictos de interés y otra información relevante a accionistas y reguladores, fomentando la transparencia en la administración&#8203;:contentReference[oaicite:4]{index=4}.",
+          "Adoptar políticas de gobierno corporativo alineadas con buenas prácticas y normativas, protegiendo los derechos de los accionistas y la integridad de la empresa&#8203;:contentReference[oaicite:5]{index=5}."
+        ]
+      },
+      {
+        "Ley": "Ley de Lobby (Ley 20.730)",
+        "Obligaciones clave": [
+          "Registrar las gestiones de lobby o cabildeo con autoridades públicas, reportando reuniones, viajes y donativos según exige la ley, para **transparentar interacciones** con el gobierno.",
+          "Responder los requerimientos de información sobre actividades de lobby y abstenerse de prácticas indebidas de influencia, cumpliendo la normativa de transparencia."
+        ]
+      }
+    ],
+    "Servicios Financieros (Banca, FinTech y Seguros)": [
+      {
+        "Ley": "Ley General de Bancos (Modernización Ley 21.130)",
+        "Obligaciones clave": [
+          "Mantener los **índices de capital mínimo** y reservas conforme a Basilea III, garantizando solvencia bancaria (ej., 8% sobre activos ponderados por riesgo, Tier1 reforzado).",
+          "Someterse a la supervisión de la CMF y cumplir su normativa, tras la integración de la SBIF en la CMF; los bancos y emisores de tarjetas quedan bajo control de la CMF.",
+          "Implementar sólidos sistemas de gestión de riesgos y gobierno corporativo para gestionar riesgos crediticios, de mercado y operacionales según exige la ley bancaria.",
+          "Desarrollar **planes de contingencia y resolución bancaria** conforme a lineamientos del regulador, para enfrentar eventuales crisis minimizando impacto a depositantes."
+        ]
+      },
+      {
+        "Ley": "Ley Fintech (Ley 21.521)",
+        "Obligaciones clave": [
+          "Registrar los nuevos servicios fintech (plataformas de **crowdfunding**, iniciadores de pagos, etc.) en la CMF y obtener autorización **antes de operar**.",
+          "Cumplir las reglas de Finanzas Abiertas: bancos y fintechs deben habilitar APIs seguras para compartir datos financieros de clientes con su consentimiento, según la normativa de **open banking**.",
+          "Aplicar estándares de seguridad de la información y gestión de riesgos para proteger los datos de clientes en el sistema de finanzas abiertas, conforme a lo establecido por la CMF.",
+          "Brindar información clara y trato justo a los clientes financieros sobre los servicios fintech, cumpliendo normas de conducta similares a las de entidades tradicionales."
+        ]
+      },
+      {
+        "Ley": "Ley Antilavado de Activos (Ley 19.913)",
+        "Obligaciones clave": [
+          "Realizar **debida diligencia** al incorporar clientes (KYC), verificando identidad y monitoreando su comportamiento para detectar operaciones inusuales.",
+          "Reportar operaciones sospechosas y transacciones en efectivo sobre umbrales definidos a la Unidad de Análisis Financiero (UAF) en forma oportuna.",
+          "Establecer controles internos y programas de capacitación en prevención de lavado de dinero y financiamiento del terrorismo según instrucciones de la UAF.",
+          "Designar un oficial de cumplimiento y conservar registros de transacciones por los plazos legales, disponibles para inspección de la UAF."
+        ]
+      },
+      {
+        "Ley": "Ley de Mercado de Valores (Ley 18.045)",
+        "Obligaciones clave": [
+          "Inscribir toda oferta pública de valores ante la CMF y difundir un prospecto con información financiera y de negocios completa para inversionistas.",
+          "Divulgar de inmediato todo **hecho esencial** que pueda influir en el precio de los valores (hechos relevantes) al mercado.",
+          "Prohibir el uso de información privilegiada: insiders con datos no públicos no pueden operar con esos valores; la empresa debe tener políticas para prevenir y detectar esta práctica ilícita.",
+          "Presentar estados financieros periódicos (trimestrales y anuales) y someterse a auditorías, cumpliendo requisitos de gobierno corporativo que exige la CMF."
+        ]
+      },
+      {
+        "Ley": "Normativa de Seguros (DFL 251 y Ley 20.667)",
+        "Obligaciones clave": [
+          "Mantener reservas técnicas y patrimonio de riesgo suficientes según exige la CMF, garantizando la solvencia de la compañía de seguros en resguardo de los asegurados.",
+          "Tratar **equitativamente** a los clientes: explicar claramente coberturas, exclusiones y primas en pólizas, conforme a la Ley de Contrato de Seguros (20.667).",
+          "Liquidar sin demora los siniestros válidos dentro de los plazos legales, siguiendo el procedimiento establecido, e informar estadísticas de siniestros al regulador.",
+          "Implementar controles antifraude y prevención de lavado de activos, ya que las aseguradoras también son sujetos obligados a reportar operaciones sospechosas a la UAF."
+        ]
+      }
+    ],
+    "Minería y Metales": [
+      {
+        "Ley": "Ley de Bases del Medio Ambiente (Ley 19.300)",
+        "Obligaciones clave": [
+          "Obtener una **Resolución de Calificación Ambiental** (RCA) aprobatoria vía Estudio o Declaración de Impacto Ambiental antes de iniciar proyectos mineros que puedan afectar significativamente el entorno; cumplir todas las medidas de mitigación y compensación impuestas.",
+          "Respetar las normas de control de contaminación: cumplir estándares de calidad de aire y límites de descargas de aguas establecidos, asegurando que emisiones atmosféricas y efluentes mineros se mantengan dentro de los rangos legales.",
+          "Implementar planes de manejo de residuos mineros (relaves, estériles), incluyendo la gestión de residuos peligrosos, acorde al principio de Responsabilidad Extendida del Productor (REP) cuando aplique.",
+          "Consultar a comunidades locales e indígenas (Convenio OIT 169) si el proyecto las afecta, incorporando sus observaciones en la planificación para evitar o reducir impactos socioculturales."
+        ]
+      },
+      {
+        "Ley": "Ley de Cierre de Faenas e Instalaciones Mineras (Ley 20.551)",
+        "Obligaciones clave": [
+          "Elaborar y someter a aprobación de SERNAGEOMIN un **plan de cierre** antes de iniciar la operación minera, detallando cómo se clausurará y restaurará el sitio al término de su vida útil.",
+          "Constituir garantías financieras (fianzas, pólizas o fondos de reserva) suficientes para costear íntegramente la ejecución del plan de cierre aprobado, actualizando su valor a medida que avanza la explotación.",
+          "Revisar y actualizar periódicamente el plan de cierre, e ir ejecutando medidas de clausura progresivas en las áreas que vayan quedando inactivas, minimizando riesgos ambientales durante la operación.",
+          "Al cese definitivo de la mina, **ejecutar todas las acciones del plan de cierre** y someterse a fiscalización para obtener el certificado de cierre total, liberando a la empresa de obligaciones posteriores."
+        ]
+      },
+      {
+        "Ley": "Reglamento de Seguridad Minera (DS 132/2004)",
+        "Obligaciones clave": [
+          "Aplicar estrictas medidas de **seguridad y salud ocupacional** en la faena: evaluaciones regulares de riesgos, capacitaciones a los trabajadores y presencia de expertos en prevención, conforme exige SERNAGEOMIN.",
+          "Proveer equipos de protección personal adecuados y supervisar su uso obligatorio; establecer planes de emergencia para accidentes graves (derrumbes, incendios, escapes de gas, etc.).",
+          "Monitorear y controlar riesgos laborales (polvo sílice, gases tóxicos, ruido, vibraciones) para que se mantengan bajo límites permisibles, previniendo enfermedades profesionales.",
+          "Reportar de inmediato a la autoridad cualquier accidente grave o fatal, colaborando con la investigación, y mejorar continuamente los protocolos para evitar recurrencia."
+        ]
+      },
+      {
+        "Ley": "Código de Minería",
+        "Obligaciones clave": [
+          "Obtener concesiones mineras de exploración o explotación otorgadas por el Estado y pagar las patentes mineras anuales para mantener vigentes esos derechos.",
+          "Iniciar la **explotación dentro del plazo** legal (normalmente 4 años desde la concesión definitiva) para evitar la caducidad de la concesión, y ceñirse a métodos de extracción permitidos por la normativa.",
+          "Respetar la propiedad del recurso minero según la ley: declarar correctamente las producciones y pagar las correspondientes regalías o impuestos específicos a la minería (como el royalty).",
+          "Cumplir cualquier normativa especial asociada a sustancias o zonas sensibles: por ejemplo, si aplica, obtener permisos adicionales para explotar litio o hidrocarburos, o abstenerse de minar en áreas protegidas sin autorización."
+        ]
+      }
+    ],
+    "Energía y Utilidades": [
+      {
+        "Ley": "Ley General de Servicios Eléctricos (DFL 4/20.018)",
+        "Obligaciones clave": [
+          "Obtener concesiones o permisos pertinentes para actividades de generación, transmisión o distribución eléctrica, asegurando la **autorización legal** de centrales, líneas y redes.",
+          "Mantener un **suministro seguro y continuo** de energía: las distribuidoras deben cumplir estándares de calidad de servicio (p. ej., límites de interrupciones) y se someten a tarifas reguladas para proteger a los usuarios.",
+          "Garantizar acceso abierto y no discriminatorio a las redes: los propietarios de transmisión o distribución deben permitir conexiones de terceros en igualdad de condiciones, promoviendo la competencia.",
+          "Acatar la fiscalización de la CNE y la SEC, incluyendo **reportar información técnica y comercial** requerida y seguir normas técnicas de seguridad en instalaciones eléctricas."
+        ]
+      },
+      {
+        "Ley": "Metas de Energías Renovables (Ley 20.698 \"20/25\")",
+        "Obligaciones clave": [
+          "Cumplir con la cuota obligatoria de energías renovables: las generadoras deben acreditar que un porcentaje mínimo de la energía que venden proviene de fuentes ERNC (por ejemplo, 20% al 2025), o de lo contrario pagar multas.",
+          "Participar en el sistema de **certificados verdes** u otros mecanismos de cumplimiento para certificar la cantidad de energía renovable inyectada al sistema eléctrico, conforme a lo establecido por la autoridad.",
+          "Reportar anualmente al regulador el avance en el cumplimiento de las metas renovables y el desglose de su matriz de generación (ERNC vs convencional) para verificación del objetivo legal.",
+          "Invertir en proyectos o contratos de suministro de energía solar, eólica, hidro o biomasa suficientes para alcanzar los porcentajes obligatorios de ERNC en los plazos que fija la normativa."
+        ]
+      },
+      {
+        "Ley": "Ley de Eficiencia Energética (Ley 21.305)",
+        "Obligaciones clave": [
+          "Consumidores de energía a gran escala (≥50 teracalorías anuales) deben **reportar cada año** al Ministerio de Energía su consumo energético total y su intensidad energética (relación consumo/producción) del año previo.",
+          "Si son catalogados como **Consumidores con Capacidad de Gestión de Energía (CCGE)**, las empresas deben implementar Sistemas de Gestión de Energía certificados que cubran al menos el 80% de su consumo total.",
+          "Nuevos edificios comerciales y públicos deben contar con **Calificación Energética**, y grandes proyectos inmobiliarios cumplir estándares de eficiencia (aislación térmica, iluminación eficiente, etc.) según los reglamentos vigentes.",
+          "Importadores de vehículos y equipos deben cumplir con etiquetado de eficiencia energética (ej., etiquetas de rendimiento en autos nuevos) y estándares mínimos establecidos para aparatos y maquinarias."
+        ]
+      },
+      {
+        "Ley": "Regulación de Combustibles y Gas",
+        "Obligaciones clave": [
+          "Cumplir las normas de calidad de combustibles dictadas por la SEC y el Ministerio (p. ej., límite de azufre en diésel, octanaje mínimo en gasolinas) para reducir emisiones contaminantes.",
+          "Obtener y mantener licencias para distribuir gas o almacenar combustibles, acatando la normativa de seguridad para **gasoductos, plantas de GLP y estaciones de servicio**, incluyendo inspecciones regulares de instalaciones.",
+          "Implementar planes de prevención de fugas y respuesta a emergencias: las empresas de gas deben inspeccionar periódicamente las redes y atender prontamente cualquier fuga reportada, garantizando la seguridad de sus clientes.",
+          "Seguir requisitos de transparencia tarifaria o regulación de precios donde aplique (por ejemplo, en GLP de cilindros o cargos de distribución eléctrica/gas) y abstenerse de prácticas anticompetitivas en los mercados de energía."
+        ]
+      }
+    ],
+    "Telecomunicaciones y Tecnología": [
+      {
+        "Ley": "Ley General de Telecomunicaciones (Ley 18.168)",
+        "Obligaciones clave": [
+          "Obtener concesiones o permisos para usar espectro radioeléctrico y operar servicios de telecomunicaciones (telefonía, internet, TV) y respetar los parámetros técnicos y geográficos fijados en la licencia.",
+          "Asegurar **continuidad y calidad** en el servicio: cumplir indicadores mínimos (tiempo en línea, ancho de banda, plazo de reposición tras cortes) y compensar a usuarios conforme a reglamentos si ocurren fallas.",
+          "Respetar la **neutralidad de la red** (Chile fue pionero en 2010): no bloquear ni degradar arbitrariamente contenidos o aplicaciones lícitas en internet, informando a usuarios sobre cualquier gestión de tráfico necesaria.",
+          "Disponer de medios para interceptación legal: proporcionar capacidades técnicas para cumplir órdenes judiciales de vigilancia; y conservar metadata de comunicaciones por el plazo que la ley exija, para fines de seguridad."
+        ]
+      },
+      {
+        "Ley": "Derechos de Usuarios Telecom (Ley 21.708 de 2024)",
+        "Obligaciones clave": [
+          "Informar **proactivamente** en cada boleta sobre planes alternativos más convenientes: la empresa debe indicar si existen planes vigentes con igual o mejores prestaciones a menor precio para que el cliente pueda cambiarse.",
+          "Permitir al cliente cambiarse de plan en cualquier momento **sin costo ni trabas**, eliminando cargos por cambio y facilitando el proceso (vía web, call center, sucursal).",
+          "Mantener un inventario actualizado de todos los planes y tarifas disponibles en su sitio web y aplicaciones, asegurando **transparencia total** en la oferta comercial.",
+          "Cumplir las exigencias de SERNAC y Subtel en atención al cliente: tiempos máximos de respuesta a reclamos, compensaciones automáticas por caídas prolongadas del servicio, etc.."
+        ]
+      },
+      {
+        "Ley": "Propiedad Intelectual y Ciberseguridad",
+        "Obligaciones clave": [
+          "Respetar licencias de software y leyes de copyright en todas las operaciones; las empresas tech deben evitar uso no autorizado de propiedad intelectual y atender notificaciones de bajada de contenido (DMCA o equivalentes locales).",
+          "Cumplir la Ley de Delitos Informáticos (Ley 21.459 de 2022): implementar medidas de **ciberseguridad** para prevenir accesos no autorizados a sistemas y datos; evitar actividades ilícitas como hacking o tratamiento indebido de datos (con penas corporativas severas).",
+          "Notificar a usuarios y autoridades en caso de brechas significativas de datos personales si alguna normativa sectorial lo exige (sectores financiero y salud ya contemplan notificación de incidentes, a la espera de una ley general).",
+          "Acatar regulaciones locales de datos en la nube: si se manejan datos sensibles gubernamentales, alojarlos en territorio chileno según corresponda; cooperar con entidades fiscalizadoras en auditorías o revisiones de seguridad."
+        ]
+      }
+    ],
+    "Manufactura e Industria": [
+      {
+        "Ley": "Seguridad Industrial y Laboral (Código del Trabajo & Ley 16.744)",
+        "Obligaciones clave": [
+          "Implementar programas de salud y seguridad ocupacional conforme exige el Código del Trabajo y la Ley 16.744 (Seguro de Accidentes del Trabajo): formar **comités paritarios** en empresas de ≥25 trabajadores, contar con expertos en prevención, etc..",
+          "Cumplir el Reglamento sobre Condiciones Sanitarias y Ambientales en el Lugar de Trabajo (DS 594): garantizar ventilación, iluminación, higiene y operación segura de maquinarias en las instalaciones productivas.",
+          "Proporcionar a los trabajadores EPP adecuados y capacitación sobre manejo de sustancias peligrosas o equipos, reduciendo al mínimo accidentes laborales y enfermedades profesionales.",
+          "Notificar accidentes graves o fatales y enfermedades profesionales a la Inspección del Trabajo y a la mutualidad (ACHS/IST/etc.), e implementar medidas correctivas para prevenir su repetición."
+        ]
+      },
+      {
+        "Ley": "Emisiones Industriales y Residuos",
+        "Obligaciones clave": [
+          "Obtener permisos de emisión y cumplir las normas sectoriales de contaminantes atmosféricos (p. ej., material particulado, SO₂/NOx para calderas industriales) fijadas en los Planes de Descontaminación o normativa nacional.",
+          "Gestionar adecuadamente los residuos industriales: si se generan residuos peligrosos, seguir los protocolos de almacenamiento, transporte y disposición final (DS 148); para residuos valorizables, cumplir con obligaciones de la ley REP (Ley 20.920) cuando corresponda.",
+          "Si la planta opera en **zonas saturadas**, implementar planes de reducción de emisiones según lo exigido (p. ej., disminuir material particulado en invierno) para contribuir a las metas de descontaminación.",
+          "Realizar monitoreos ambientales periódicos (calidad de aire, ruidos, efluentes) según las RCA o permisos sectoriales, y reportar los resultados a la Superintendencia de Medio Ambiente para demostrar el cumplimiento."
+        ]
+      },
+      {
+        "Ley": "Normas de Producto y Seguridad de Consumo",
+        "Obligaciones clave": [
+          "Asegurar que los productos manufacturados cumplan estándares chilenos obligatorios de seguridad y normas técnicas antes de su venta: ej., artefactos eléctricos con certificación SEC, juguetes con certificación de seguridad, etc.",
+          "Rotular los productos conforme a la normativa chilena: por ejemplo, prendas de vestir con etiqueta de composición textil en español, sustancias químicas con hojas de seguridad (MSDS) disponibles, alimentos según normas de etiquetado, etc.",
+          "Si se detecta un defecto post-venta que afecte la seguridad, realizar **retiros o recalls** oportunos en coordinación con SERNAC y autoridades, informando a consumidores y corrigiendo el problema para evitar daños.",
+          "Respetar garantías y servicio postventa según la Ley del Consumidor: reparar o reemplazar productos defectuosos dentro del período legal de garantía (3 meses si no se pactó más), o devolver el dinero si aplica."
+        ]
+      },
+      {
+        "Ley": "Ley de Libre Competencia (DL 211)",
+        "Obligaciones clave": [
+          "Evitar **conductas colusorias**: no pactar precios ni cuotas de mercado con competidores; la fijación de precios o cartelización es ilegal y conlleva altas multas y posibles penas a ejecutivos (delitos antitrust).",
+          "No abusar de posición dominante si la empresa la ostenta: prácticas como precios predatorios, negativas de venta injustificadas o exclusividades que restrinjan la competencia están prohibidas por la normativa de libre competencia.",
+          "Notificar y obtener aprobación previa para fusiones o adquisiciones que superen ciertos umbrales de ventas, presentándolas al Tribunal de Defensa de la Libre Competencia (TDLC) para asegurar que no dañen la competencia en el mercado.",
+          "Implementar programas de cumplimiento antitrust (capacitaciones, auditorías internas) para asegurar que ningún empleado incurra en conductas anticompetitivas, especialmente en industrias con historial de colusión."
+        ]
+      }
+    ],
+    "Agricultura e Industria Alimentaria": [
+      {
+        "Ley": "Código Sanitario de Alimentos (RSA)",
+        "Obligaciones clave": [
+          "Obtener **autorizaciones sanitarias** para las plantas de alimentos (otorgadas por Seremi de Salud) y cumplir con las exigencias del Reglamento Sanitario de Alimentos en higiene, infraestructura, equipos y manipulación.",
+          "Alcanzar estándares de inocuidad alimentaria: asegurar que los productos estén libres de contaminantes; realizar análisis de calidad (microbiológicos, químicos) según protocolos del MINSAL para lotes de producción.",
+          "Implementar trazabilidad en la cadena de producción: mantener registros del origen de materias primas y destino de productos, facilitando **retiros rápidos** en caso de detección de alimentos nocivos o adulterados.",
+          "Respetar la cadena de frío para perecibles (ej., lácteos, carnes): conservar temperaturas adecuadas en almacenamiento y transporte; etiquetar fechas de vencimiento y condiciones de conservación conforme al RSA."
+        ]
+      },
+      {
+        "Ley": "Ley de Etiquetado Nutricional (Ley 20.606)",
+        "Obligaciones clave": [
+          "Colocar en los alimentos envasados que excedan los límites establecidos de calorías, azúcares, sodio o grasas saturadas el sello frontal **\"ALTO EN\"** correspondiente, advirtiendo su elevado contenido.",
+          "No publicitar ni promocionar alimentos con sello \"Alto en\" a menores de 14 años, ni venderlos en establecimientos escolares, cumpliendo las restricciones de marketing que impone la ley.",
+          "Reformul​ar productos o ajustar porciones si es necesario para adecuarse a los límites de nutrientes críticos que se han endurecido progresivamente, evitando superar los valores máximos permitidos de azúcar, sodio o grasas.",
+          "Proporcionar información nutricional clara en el etiquetado (calorías, proteínas, carbohidratos, etc.) y asegurar que cualquier declaración de salud o nutrición cumpla los criterios estrictos del reglamento."
+        ]
+      },
+      {
+        "Ley": "Regulación de Insumos Agrícolas y Biológicos",
+        "Obligaciones clave": [
+          "Registrar ante el SAG los plaguicidas, fertilizantes, medicamentos veterinarios u otros insumos agrícolas **antes de importar, distribuir o usar**, demostrando su eficacia y seguridad para su aprobación.",
+          "Usar agroquímicos según las indicaciones de la etiqueta y las buenas prácticas: capacitar a los trabajadores en su manejo, proveerles elementos de protección personal, y evitar contaminación de suelos o aguas.",
+          "Cumplir con los **Límites Máximos de Residuos** (LMR) de pesticidas en alimentos; mantener bitácoras de aplicación de agroquímicos para trazabilidad, especialmente en cultivos de exportación sujetos a fiscalización.",
+          "Obedecer restricciones sobre OGM (organismos genéticamente modificados): obtener permisos si se cultivan semillas transgénicas, etiquetar productos derivados de OGM cuando lo requiera la normativa y evitar contaminación cruzada con cultivos tradicionales."
+        ]
+      },
+      {
+        "Ley": "Código de Aguas (Reforma 2022)",
+        "Obligaciones clave": [
+          "Contar con **derechos de aprovechamiento de aguas** otorgados por la DGA para el riego agrícola y no extraer por encima del caudal autorizado, sin perjudicar a terceros aguas abajo.",
+          "Prevenir la contaminación de cauces: las actividades pecuarias o agrícolas intensivas (feedlots, lecherías) deben manejar purines y residuos para que no escurran a ríos o napas, cumpliendo normas de calidad de aguas.",
+          "Adoptar prácticas de uso eficiente del agua (riego tecnificado, recirculación) especialmente en zonas con escasez, dado que la reforma al Código prioriza el consumo humano y la sustentabilidad en la gestión hídrica.",
+          "Acatar eventuales **restricciones** temporales de uso (turnos de riego, suspensión) en períodos de sequía o escasez declarada por la autoridad, respetando que se privilegie primero el consumo humano según el marco legal vigente."
+        ]
+      }
+    ],
+    "Salud y Farmacéutica": [
+      {
+        "Ley": "Ley de Derechos y Deberes del Paciente (Ley 20.584)",
+        "Obligaciones clave": [
+          "Respetar los derechos del paciente en toda prestación de salud: obtener **consentimiento informado** antes de procedimientos y permitir que el paciente rechace tratamientos, salvo excepciones legales de riesgo vital.",
+          "Proteger la confidencialidad de las fichas clínicas e información de salud de los pacientes, revelándola solo a personal autorizado o por solicitud del propio paciente, acorde a las disposiciones de privacidad vigentes.",
+          "Implementar un sistema de acogida de reclamos y **orientar a los pacientes sobre sus derechos** y cómo quejars​e; dar respuesta a los reclamos dentro de los plazos fijados por la Superintendencia de Salud.",
+          "Brindar atención de urgencia sin exigencia de pago previo cuando esté en riesgo la vida o salud grave del paciente, tal como lo ordena la ley, cobrando luego según arancel regulado de emergencias."
+        ]
+      },
+      {
+        "Ley": "Leyes Farmacéuticas (Ley 20.724 y 21.198)",
+        "Obligaciones clave": [
+          "Cumplir requisitos de registro y autorización de medicamentos: todo fármaco debe tener registro ISP antes de comercializarse; las farmacias solo pueden vender medicamentos formalmente aprobados.",
+          "Observar las normas de dispensación: solo vender medicamentos de venta bajo receta con prescripción válida; llevar registros de psicotrópicos y estupefacientes para prevenir su uso indebido.",
+          "Acatar la obligación de **bioequivalencia**: ofrecer al paciente la alternativa de medicamento genérico bioequivalente del recetado, si existe, para fomentar el acceso económico, según la ley lo exige.",
+          "Exhibir precios de medicamentos claramente y mantener un listado actualizado de precios de los fármacos esenciales a disposición del público, cumpliendo las medidas de transparencia incorporadas en las últimas reformas."
+        ]
+      },
+      {
+        "Ley": "Regulación de Profesionales de la Salud",
+        "Obligaciones clave": [
+          "Verificar que todo profesional de la salud empleado (médico, enfermera, etc.) posea licencia y registro vigente ante la Superintendencia de Salud; informar a la autoridad cualquier sanción o inhabilidad conocida.",
+          "Aplicar **protocolos de control de infecciones** en establecimientos de salud (p. ej., normas de asepsia, manejo de residuos clínicos) para minimizar infecciones intrahospitalarias; reportar brotes de enfermedades de notificación obligatoria.",
+          "Eliminar desechos biomédicos (cortopunzantes, muestras biológicas, fármacos vencidos) siguiendo la normativa de residuos peligrosos, evitando riesgo sanitario y ambiental.",
+          "En investigaciones clínicas, cumplir las Buenas Prácticas Clínicas: obtener aprobación del comité de ética y autorización sanitaria, garantizando el consentimiento informado y la seguridad de los participantes."
+        ]
+      },
+      {
+        "Ley": "DFL 1 (2005) Salud - Isapres",
+        "Obligaciones clave": [
+          "Las ISAPRES deben ofrecer planes de salud estandarizados y no pueden discriminar por preexistencias más allá de lo permitido; deben respetar la **afiliación abierta** de nuevos cotizantes sin rechazar arbitrariamente.",
+          "Mantener reservas técnicas y un fondo de compensación de riesgos conforme determine la Superintendencia de Salud, asegurando que puedan cubrir los gastos médicos de sus afiliados.",
+          "Entregar información clara al usuario sobre coberturas, exclusiones y reajustes anuales del plan; permitir terminar el contrato o cambiarse de plan siguiendo los procedimientos legales sin trabas indebidas.",
+          "Acatar los fallos de la autoridad y tribunales: por ejemplo, si la Superintendencia o cortes de justicia ordenan restituir coberturas o reembolsar cobros excesivos tras un reclamo, la isapre debe cumplirlo oportunamente."
+        ]
+      }
+    ]
+  }
+  

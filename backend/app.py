@@ -1,58 +1,49 @@
-from flask import Flask, request, jsonify
+# app.py
+from flask import Flask, request, jsonify, render_template, render_template_string
 from flask_cors import CORS
 import os
-from supabase import create_client
 import requests
 from dotenv import load_dotenv
 from pathlib import Path
-from agente import agente_cumplimiento
-import sys
-import os
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+from datetime import datetime
+from supabase import create_client
+from acciones import manejar_accion, procesar_respuesta_literal
+from usuarios import (
+    insertar_usuario,
+    existe_usuario,
+    actualizar_industria,
+    obtener_usuario_por_email
+)
+from agente import agente_cumplimiento, interpretar_gpt
+from notificaciones import enviar_email
 
-# Configuración inicial
+# Configuración
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
-# Carga MÁS TEMPRANO posible (antes de cualquier otra importación)
 env_path = Path(__file__).parent / '.env'
 load_dotenv(dotenv_path=env_path, override=True)
 
-# Verificación EXPLÍCITA
-# print("\n=== VALORES CARGADOS ===")
-# print(f"MAILGUN_DOMAIN: {os.getenv('MAILGUN_DOMAIN')}")
-# print(f"MAILGUN_API_KEY: {'***' if os.getenv('MAILGUN_API_KEY') else 'NO'}")
-# print("=======================\n")
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+MAILGUN_DOMAIN = os.getenv("MAILGUN_DOMAIN")
+MAILGUN_API_KEY = os.getenv("MAILGUN_API_KEY")
+BASE_URL = os.getenv("BASE_URL", "http://localhost:5000")
 
-if "sandbox" in os.getenv("MAILGUN_DOMAIN", "").lower():
-    raise ValueError("ERROR: Se está usando dominio sandbox. ¡Verifica tu .env!")
-
-# Configuración de clientes
-supabase = create_client(
-    os.getenv("SUPABASE_URL"),
-    os.getenv("SUPABASE_KEY")
-)
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 def enviar_correo_bienvenida(email):
-    """Envía correo usando dominio configurado en .env"""
-    domain = os.getenv("MAILGUN_DOMAIN")
-    api_key = os.getenv("MAILGUN_API_KEY")
-    base_url = os.getenv("BASE_URL") or "http://localhost:5000"  # Puedes usar ngrok o dominio real
-
-    if not domain or not api_key:
-        raise ValueError("Faltan configuraciones de Mailgun en .env")
-
-    if "sandbox" in domain:
-        print(f"¡ADVERTENCIA! Usando dominio sandbox: {domain}")
+    if not MAILGUN_DOMAIN or not MAILGUN_API_KEY:
+        raise ValueError("Faltan configuraciones de Mailgun")
 
     industrias = ["tecnologia", "construccion", "servicios", "agricultura", "otra"]
 
     links = "\n".join([
-        f"👉 {i.capitalize()}: {base_url}/respuesta-industria?i={i}&e={email}"
+        f"👉 {i.capitalize()}: {BASE_URL}/respuesta-industria?i={i}&e={email}"
         for i in industrias
     ])
 
-    mensaje = f"""¡Bienvenido/a al agente de cumplimiento normativo!
+    mensaje = f"""¡Bienvenido/a CumpliBot, tu agente de cumplimiento normativo!
 
 A partir de ahora recibirás correos personalizados con recomendaciones prácticas para cumplir las leyes que afectan a tu empresa.
 
@@ -65,25 +56,18 @@ Gracias por confiar en nosotros.
 """
 
     response = requests.post(
-        f"https://api.mailgun.net/v3/{domain}/messages",
-        auth=("api", api_key),
+        f"https://api.mailgun.net/v3/{MAILGUN_DOMAIN}/messages",
+        auth=("api", MAILGUN_API_KEY),
         data={
-            "from": f"ComplaBot <notificaciones@{domain}>",
+            "from": f"ComplaBot <notificaciones@{MAILGUN_DOMAIN}>",
             "to": [email],
             "subject": "👋 Bienvenido a ComplaBot",
             "text": mensaje
         }
     )
 
-    print(f"\n=== Debug Email ===")
-    print(f"Dominio usado: {domain}")
-    print(f"Status Code: {response.status_code}")
-    print(f"Response: {response.text}")
-    print("==================\n")
-
+    print(f"📬 Envío correo → {response.status_code}")
     return response
-
-from flask import render_template
 
 @app.route("/")
 def landing():
@@ -94,198 +78,124 @@ def suscribirse():
     try:
         data = request.get_json()
         email = data.get("email")
-        
         if not email:
             return jsonify({"error": "Falta el email"}), 400
 
-        # Verificar existencia
-        existing = supabase.rpc(
-            "verificar_email_existente", 
-            {"email_input": email}
-        ).execute()
-        
-        if existing.data:
+        if existe_usuario(email):
             return jsonify({"message": "Ya estás suscrito"}), 200
 
-        # Insertar nuevo usuario
-        supabase.rpc(
-            "insertar_usuario",
-            {"email_input": email}
-        ).execute()
-        
-        # Enviar correo con manejo explícito de errores
+        insertar_usuario(email)
         try:
-            mail_response = enviar_correo_bienvenida(email)
-            if mail_response.status_code != 200:
-                raise ValueError(f"Error Mailgun: {mail_response.text}")
-        except Exception as mail_error:
-            print(f"Error enviando correo: {str(mail_error)}")
-            # Continúa aunque falle el correo
-            return jsonify({
-                "message": "Suscripción completada (pero correo no enviado)",
-                "warning": str(mail_error)
-            }), 200
+            enviar_correo_bienvenida(email)
+        except Exception as e:
+            return jsonify({"message": "Suscripción completada, pero sin correo", "warning": str(e)}), 200
 
         return jsonify({"message": "Suscripción exitosa"}), 200
-
     except Exception as e:
-        print(f"\n=== Error en suscripción ===")
-        print(f"Tipo: {type(e).__name__}")
-        print(f"Mensaje: {str(e)}")
-        print("==========================\n")
-        return jsonify({"error": "Error interno del servidor"}), 500
-
-@app.route("/test-config")
-def test_config():
-    """Ruta para verificar configuraciones"""
-    return jsonify({
-        "mailgun_domain": os.getenv("MAILGUN_DOMAIN"),
-        "supabase_connected": bool(os.getenv("SUPABASE_URL")),
-        "env_file": str(env_path),
-        "env_exists": env_path.exists()
-    })
+        return jsonify({"error": str(e)}), 500
 
 @app.route("/respuesta-industria", methods=["GET"])
 def respuesta_industria_click():
     industria = request.args.get("i")
     email = request.args.get("e")
 
-    print(f"\n=== PARÁMETROS RECIBIDOS ===")
-    print(f"Email: '{email}'")
-    print(f"Industria: '{industria}'")
-    
     if not industria or not email:
-        return jsonify({"error": "Parámetros incompletos"}), 400
+        return jsonify({"error": "Faltan parámetros"}), 400
 
-    try:
-        email = email.strip().lower()
-        industria = industria.strip().capitalize()
+    if not existe_usuario(email):
+        return jsonify({"error": "Usuario no encontrado"}), 404
 
-        print(f"\n=== PARÁMETROS NORMALIZADOS ===")
-        print(f"Email: '{email}'")
-        print(f"Industria: '{industria}'")
+    actualizar_industria(email, industria.capitalize())
 
-        all_users = supabase.table('usuarios').select('*').execute()
-        print(f"\n=== TODOS LOS USUARIOS ===")
-        for user in all_users.data:
-            print(f"Usuario: {user['email']} - ID: {user.get('id')}")
-        print("========================")
+    return f"""
+    <html><head><meta charset="UTF-8"><style>
+    body {{ font-family: sans-serif; text-align: center; padding: 50px; }}
+    .card {{ background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }}
+    </style></head><body>
+    <div class="card">
+        <h2>✅ Industria registrada</h2>
+        <p>Tu industria ha sido registrada como: <strong>{industria.capitalize()}</strong></p>
+        <p>Pronto recibirás recomendaciones personalizadas.</p>
+    </div></body></html>
+    """
 
-        user = supabase.table('usuarios')\
-                     .select('*')\
-                     .ilike('email', f"%{email}%")\
-                     .execute()
+@app.route('/mailgun-webhook', methods=['POST'])
+def mailgun_webhook():
+    # Mailgun manda los campos como form-data
+    sender = request.form.get('sender')
+    recipient = request.form.get('recipient')
+    subject = request.form.get('subject')
+    body_plain = request.form.get('body-plain')
+    # Puedes agregar más logs para inspección inicial
+    print(f"Nuevo correo recibido de {sender} para {recipient}: {subject}")
+    print(body_plain)
 
-        print(f"\n=== CONSULTA USUARIO ILIKE ===")
-        print(f"Resultado: {user}")
-        print(f"Datos: {user.data}")
-        print("============================")
+    # Procesa aquí la lógica según correo recibido
+    # Por ejemplo: si el sender es un usuario registrado, procesar body_plain como consulta literal
+    from usuarios import existe_usuario
+    from acciones import procesar_respuesta_literal
+    from agente import interpretar_gpt
+    from notificaciones import enviar_email
 
-        if not user.data:
-            return jsonify({"error": "Email no encontrado en la base de datos"}), 404
+    # Extrae el correo del usuario desde 'sender'
+    # Ejemplo: "Nombre <micorreo@email.com>" -> extraer el correo dentro de <>
+    import re
+    match = re.search(r"<(.+?)>", sender)
+    email = match.group(1) if match else sender
 
-        user_id = user.data[0]['id']
-        print(f"ID de usuario encontrado: {user_id}")
-
-        update = supabase.table('usuarios')\
-                       .update({'industria': industria})\
-                       .eq('id', user_id)\
-                       .execute()
-
-        print(f"\n=== RESULTADO UPDATE ===")
-        print(f"Update: {update}")
-        print(f"Update data: {update.data}")
-
-        updated = supabase.table('usuarios')\
-                        .select('*')\
-                        .eq('id', user_id)\
-                        .execute()
-
-        print(f"\n=== VERIFICACIÓN POST-ACTUALIZACIÓN ===")
-        print(f"Usuario completo: {updated.data[0] if updated.data else 'No data'}")
-
-        if updated.data:
-            actual = updated.data[0].get('industria')
-            print(f"Industria en BD: {actual}")
-            print(f"Industria esperada: {industria}")
-
-            if actual == industria:
-                return f"""
-                <html>
-                  <head>
-                    <title>Industria registrada</title>
-                    <meta charset="UTF-8">
-                    <style>
-                      body {{
-                        font-family: Arial, sans-serif;
-                        text-align: center;
-                        padding-top: 80px;
-                        background-color: #f9f9f9;
-                      }}
-                      .card {{
-                        display: inline-block;
-                        background: white;
-                        padding: 30px;
-                        border-radius: 12px;
-                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-                      }}
-                      h2 {{
-                        color: #2c3e50;
-                      }}
-                      p {{
-                        color: #555;
-                        font-size: 16px;
-                      }}
-                    </style>
-                  </head>
-                  <body>
-                    <div class="card">
-                      <h2>✅ ¡Gracias por registrarte!</h2>
-                      <p>Hemos guardado tu industria como:</p>
-                      <p><strong>{industria}</strong></p>
-                      <p>Muy pronto recibirás recomendaciones adaptadas a tu sector.</p>
-                    </div>
-                  </body>
-                </html>
-                """
-            else:
-                return jsonify({
-                    "warning": "La BD no refleja los cambios",
-                    "current_data": updated.data[0]
-                }), 500
+    if existe_usuario(email):
+        result = procesar_respuesta_literal(email, body_plain)
+        if result["status"] == "limitado":
+            enviar_email(email, "Límite diario de consultas alcanzado", result["respuesta"])
         else:
-            return jsonify({"error": "No se pudo verificar la actualización"}), 500
+            respuesta_gpt = interpretar_gpt(body_plain, email)
+            enviar_email(email, "Respuesta de ComplaBot", respuesta_gpt)
+    else:
+        # ignorar o notificar de que no es usuario
+        print(f"Correo de remitente desconocido: {email}")
 
-    except Exception as e:
-        print(f"\n❌ Error crítico: {str(e)}")
-        return jsonify({"error": str(e)}), 500
+    # Siempre responde 200 OK a Mailgun
+    return "OK", 200
 
 @app.route("/activar-agente", methods=["GET"])
 def activar_agente_manual():
     email = request.args.get("e")
-
     if not email:
         return "❌ Falta el parámetro ?e=email", 400
-
     try:
-        from agente import agente_cumplimiento
         agente_cumplimiento(email)
         return f"✅ Agente ejecutado correctamente para: {email}", 200
     except Exception as e:
-        print("❌ Error ejecutando el agente:", str(e))
         return f"⚠️ Error: {str(e)}", 500
 
+@app.route("/accion", methods=["GET"])
+def accion_usuario():
+    email = request.args.get("e")
+    etapa = request.args.get("etapa", "")
+    accion = request.args.get("accion")
+    if not email or not accion:
+        return "❌ Parámetros incompletos", 400
+    email = email.strip().lower()
+    return manejar_accion(email, accion, etapa)
+
+@app.route('/respuesta', methods=['POST'])
+def recibir_respuesta():
+    data = request.json
+    email = data.get("email")
+    texto = data.get("texto")
+    resultado = procesar_respuesta_literal(email, texto)
+    if resultado["status"] == "limitado":
+        enviar_email(
+            email,
+            "Límite diario de consultas alcanzado",
+            resultado["respuesta"]
+        )
+        return jsonify({"accion": "limitado", "mensaje": resultado["respuesta"]}), 200
+
+    # Pipeline normal: integra GPT-4.1 aquí al permitir
+    respuesta_gpt = interpretar_gpt(texto, email)
+    enviar_email(email, "Respuesta de ComplaBot", respuesta_gpt)
+    return jsonify({"accion": "permitido", "mensaje": "Respuesta enviada por email.", "respuesta_gpt": respuesta_gpt}), 200
 
 if __name__ == "__main__":
-    # Verificación final antes de iniciar
-    required_vars = ["SUPABASE_URL", "SUPABASE_KEY", "MAILGUN_DOMAIN", "MAILGUN_API_KEY"]
-    missing = [var for var in required_vars if not os.getenv(var)]
-    
-    if missing:
-        print(f"\n❌ Faltan variables requeridas: {missing}")
-        print("Verifica tu archivo .env y reinicia Flask\n")
-    else:
-        print("\n✅ Configuración válida detectada")
-        print(f"Dominio Mailgun: {os.getenv('MAILGUN_DOMAIN')}\n")
-    
-    app.run(debug=True, port=5000)
+    app.run(host="0.0.0.0", port=5050, debug=True)

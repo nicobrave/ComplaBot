@@ -1,63 +1,70 @@
-import os
+# agente.py
 import requests
-from supabase import create_client
-from dotenv import load_dotenv
+import openai
+import os
+from usuarios import obtener_datos_usuario
+from notificaciones import enviar_recomendacion_agente
 
-load_dotenv()
+openai.api_key = os.environ.get("OPENAI_API_KEY")
 
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY")
-supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+def obtener_respuesta_langflow(industria: str, etapa: str, resultado: str) -> str:
+    try:
+        url = "http://localhost:7860/api/v1/run/2e0a65f2-07e6-4411-8187-78b072acdfbe"
+        payload = {
+            "industria": industria,
+            "etapa": etapa,
+            "resultado": resultado,
+            "input_type": "text",
+            "output_type": "text"
+        }
+        headers = {"Content-Type": "application/json"}
+        response = requests.post(url, json=payload, headers=headers)
+        return response.text if response.ok else "⚠️ Error generando recomendación con Langflow"
+    except Exception as e:
+        return f"❌ Error llamando a Langflow: {str(e)}"
 
-def agente_cumplimiento(email):
-    email = email.strip().lower()
-    
-    usuario = supabase.table("usuarios").select("*").ilike("email", email).execute()
-    if not usuario.data:
-        print("🚫 Usuario no encontrado")
+def interpretar_gpt(contenido_usuario, email):
+    system_prompt = (
+        "Eres CumpliBot, un agente de cumplimiento normativo que responde profesional, "
+        "claro y siempre en tono humano. Solo responde a temas reales de cumplimiento. "
+        "El/La usuario/a puede pausar, pedir reporte, sugerir frecuencia, solicitar contenido legal, o avanzar etapa. "
+        "Si la consulta es poco clara, pide reformular la pregunta."
+    )
+    try:
+        respuesta = openai.ChatCompletion.create(
+            model="gpt-4-1106-preview",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": contenido_usuario}
+            ],
+            max_tokens=500,
+            temperature=0.2,
+            user=email
+        )
+        texto_respuesta = respuesta['choices'][0]['message']['content'].strip()
+        return texto_respuesta
+    except Exception as e:
+        print(f"Error GPT-4.1: {e}")
+        return (
+            "Lo siento, hubo un problema técnico procesando tu mensaje. "
+            "Intenta nuevamente en unos minutos."
+        )
+
+def agente_cumplimiento(email: str):
+    print(f"\n🎯 Ejecutando agente para: {email}")
+    usuario = obtener_datos_usuario(email)
+
+    if not isinstance(usuario, dict):
+        print("🚫 Usuario no encontrado o formato inválido")
         return
 
-    industria = usuario.data[0].get("industria", "Otra")
+    industria = usuario.get("industria", "").strip().capitalize()
+    etapa = usuario.get("etapa", "Diagnóstico").strip().capitalize()
+
     print(f"🎯 Industria detectada: {industria}")
+    print(f"🔄 Etapa actual: {etapa}")
 
-    historial = supabase.table("interacciones")\
-        .select("*")\
-        .eq("email", email)\
-        .order("timestamp", desc=True)\
-        .execute()
+    resultado_placeholder = "..."  # si quieres puedes cambiarlo por algo más informativo
+    texto = obtener_respuesta_langflow(industria, etapa, resultado_placeholder)
 
-    etapa_actual = "intro"
-    if historial.data:
-        etapas_previas = [h["etapa"] for h in historial.data]
-        if "intro" in etapas_previas:
-            etapa_actual = "ley1"
-
-    contenido = f"Hola, te damos la bienvenida a tu guía de cumplimiento para la industria {industria}.\n\n"
-    if etapa_actual == "intro":
-        contenido += "Comenzaremos con una introducción general a las obligaciones legales más comunes."
-    elif etapa_actual == "ley1":
-        contenido += f"Hoy revisaremos la primera ley clave que aplica a {industria.lower()}."
-
-    domain = os.getenv("MAILGUN_DOMAIN")
-    api_key = os.getenv("MAILGUN_API_KEY")
-    response = requests.post(
-        f"https://api.mailgun.net/v3/{domain}/messages",
-        auth=("api", api_key),
-        data={
-            "from": f"ComplaBot <notificaciones@{domain}>",
-            "to": [email],
-            "subject": f"📌 Comienza tu ruta de cumplimiento: {etapa_actual}",
-            "text": contenido
-        }
-    )
-
-    print(f"📬 Correo enviado ({etapa_actual}) → {email}")
-    print(f"🛠️ Status: {response.status_code} - {response.text}")
-
-    supabase.table("interacciones").insert({
-        "email": email,
-        "tipo": "enviado",
-        "etapa": etapa_actual,
-        "industria": industria,
-        "estado_agente": {"etapa": etapa_actual}
-    }).execute()
+    enviar_recomendacion_agente(email, industria, etapa, texto)

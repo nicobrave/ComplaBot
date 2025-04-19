@@ -1,0 +1,28 @@
+[
+    {
+      "etapa": "Diagnóstico",
+      "descripcion": "Identificar brechas y riesgos de cumplimiento antes de operar",
+      "objetivo": "Evaluar la situación actual para planificar acciones de cumplimiento."
+    },
+    {
+      "etapa": "Evaluación",
+      "descripcion": "Revisar normativas aplicables y determinar requerimientos según la industria.",
+      "objetivo": "Comprender qué leyes afectan y cómo cumplirlas."
+    },
+    {
+      "etapa": "Implementación",
+      "descripcion": "Ejecutar las acciones correctivas o preventivas.",
+      "objetivo": "Asegurar que se aplican las medidas necesarias para cumplir la ley."
+    },
+    {
+      "etapa": "Monitoreo",
+      "descripcion": "Supervisar el cumplimiento de forma continua.",
+      "objetivo": "Detectar desviaciones a tiempo y aplicar correcciones."
+    },
+    {
+      "etapa": "Reporte",
+      "descripcion": "Registrar y comunicar los avances y pendientes de cumplimiento.",
+      "objetivo": "Mantener trazabilidad y transparencia del proceso."
+    }
+  ]
+  
